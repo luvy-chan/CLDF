@@ -660,7 +660,7 @@ const CATEGORIES = [
   ]},
 ];
 
-let state = { globalSets:1, rows:{}, areaManual:{}, spInputs:{} };
+let state = { globalSets:1, rows:{}, areaManual:{}, spInputs:{}, jobRows:{} };
 let saveTimer = null;
 const reverseIndex = {};
 
@@ -701,6 +701,7 @@ function scheduleSave(){
   buildReverseIndex();
   buildStructure();
   updateUI();
+  restoreJobRows();
 }
 
 function scheduleSave(){
@@ -709,6 +710,20 @@ function scheduleSave(){
     try{ localStorage.setItem('magi-tracker-v2', JSON.stringify(state)); }
     catch(e){ console.error('儲存失敗', e); }
   }, 250);
+}
+
+function restoreJobRows(){
+  const allRows = Array.from(document.querySelectorAll('#jobTable tbody tr'));
+  allRows.forEach((row, idx)=>{
+    const saved = state.jobRows[idx];
+    if (!saved) return;
+    const chkIgnore = row.querySelector('.chk-ignore');
+    const chkDone = row.querySelector('.chk-done');
+    if (chkIgnore) chkIgnore.checked = !!saved.ignore;
+    if (chkDone) chkDone.checked = !!saved.done;
+    if (saved.ignore) row.className = 'row-ignore';
+    else if (saved.done) row.className = 'row-done';
+  });
 }
 
 function switchTab(tab){
@@ -1033,6 +1048,19 @@ function updateRowState(checkbox) {
   } else {
     row.className = '';
   }
+
+  const allRows = Array.from(document.querySelectorAll('#jobTable tbody tr'));
+  const idx = allRows.indexOf(row);
+  if (idx !== -1) {
+    state.jobRows[idx] = {
+      ignore: chkIgnore ? chkIgnore.checked : false,
+      done: chkDone ? chkDone.checked : false
+    };
+    scheduleSave();
+  }
+
+
+  
 }
 
 function setAllRows(type, isChecked) {
