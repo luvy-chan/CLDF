@@ -698,6 +698,8 @@ function scheduleSave(){
       state = Object.assign(state, JSON.parse(raw));
     }
   }catch(e){}
+  buildReverseIndex();
+  buildStructure();
   updateUI();
 }
 
@@ -705,7 +707,7 @@ function scheduleSave(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(()=>{
     try{ localStorage.setItem('magi-tracker-v2', JSON.stringify(state)); }
-    catch(e){}
+    catch(e){ console.error('儲存失敗', e); }
   }, 250);
 }
 
