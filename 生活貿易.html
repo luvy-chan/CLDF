@@ -677,8 +677,8 @@ function buildReverseIndex(){
   try{
     const res = await window.storage.get('magi-tracker-v2', false);
     if(res && res.value) state = Object.assign(state, JSON.parse(res.value));
-  }catch(e){ /* 尚無儲存資料 */ } 
-/*  buildReverseIndex();
+  }catch(e){  尚無儲存資料  } 
+  buildReverseIndex();
   buildStructure();
   updateUI();
 }
