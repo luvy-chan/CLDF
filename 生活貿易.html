@@ -673,12 +673,12 @@ function buildReverseIndex(){
   });
 }
 
-async function loadState(){
+/* async function loadState(){
   try{
     const res = await window.storage.get('magi-tracker-v2', false);
     if(res && res.value) state = Object.assign(state, JSON.parse(res.value));
-  }catch(e){ /* 尚無儲存資料 */ }
-  buildReverseIndex();
+  }catch(e){ /* 尚無儲存資料 */ } 
+/*  buildReverseIndex();
   buildStructure();
   updateUI();
 }
@@ -688,6 +688,24 @@ function scheduleSave(){
   saveTimer = setTimeout(async ()=>{
     try{ await window.storage.set('magi-tracker-v2', JSON.stringify(state), false); }
     catch(e){ console.error('儲存失敗', e); }
+  }, 250);
+} */
+
+  async function loadState(){
+  try{
+    const raw = localStorage.getItem('magi-tracker-v2');
+    if(raw){
+      state = Object.assign(state, JSON.parse(raw));
+    }
+  }catch(e){}
+  updateUI();
+}
+
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    try{ localStorage.setItem('magi-tracker-v2', JSON.stringify(state)); }
+    catch(e){}
   }, 250);
 }
 
